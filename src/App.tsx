@@ -1,25 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import LoginPage from './Components/Login';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import Home from './Components/Home';
+import { useEffect, useState } from 'react';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const isLogin = localStorage.getItem('jlabs-exam-authenticated') === 'true';
+    setIsAuthenticated(isLogin);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route
+        path='/'
+        element={
+          isAuthenticated ? (
+            <Home setIsAuthenticated={setIsAuthenticated} />
+          ) : (
+            <Navigate to='/login' />
+          )
+        }
+      />
+      <Route
+        path='/login'
+        element={
+          isAuthenticated ? (
+            <Navigate to='/' />
+          ) : (
+            <LoginPage setIsAuthenticated={setIsAuthenticated} />
+          )
+        }
+      />
+    </Routes>
   );
 }
 
